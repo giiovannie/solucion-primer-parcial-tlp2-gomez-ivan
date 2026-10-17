@@ -49,11 +49,11 @@ export const registerValidation = [
     }),
   // TODO: 6. Validar profile.first_name y profile.last_name como obligatorios, y profile.phone como opcional.
   // ? Las unicidades requieren una validación personalizada asíncrona.
-    body("first_name")
+    body("profile.first_name")
       .notEmpty().withMessage("el nombre no debe de estar vacio"),
-    body("last_name")
+    body("profile.last_name")
       .notEmpty().withMessage("el apellido no debe de estar vacio"),
-    body("phone")
+    body("profile.phone")
       .optional()
 ];
 
