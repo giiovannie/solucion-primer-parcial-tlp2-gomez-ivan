@@ -64,5 +64,5 @@ export const loginValidation = [
     .notEmpty().withMessage("el email es obliggatorio"),
   // TODO: 8. Validar password: obligatoria.
   body("password")
-    .notEmpty()
+    .notEmpty().withMessage("la contraseña no de de estar vacia")
 ];
