@@ -29,6 +29,7 @@ export const ProjectTechnologyModel = sequelize.define(
       allowNull: false,
       references: {
         model: TechnologyModel,
+        key: "id"
       },
     },
   },
