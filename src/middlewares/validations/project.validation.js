@@ -13,8 +13,8 @@ export const createProjectValidation = [
     .withMessage("el codigo no debe de estar vacio")
     .bail()
     .custom(async (code) => {
-      const code = await ProjectModel.findOne({ where: { code } });
-      if (code) throw new Error("el codigo ya existe");
+      const codeExist = await ProjectModel.findOne({ where: { code } });
+      if (codeExist) throw new Error("el codigo ya existe");
       return true;
     }),
   // TODO: 2. Validar name y description como obligatorios.
@@ -30,22 +30,17 @@ export const createProjectValidation = [
     .isIn(["in_progress", "paused", "finished", "planning"]),
   // TODO: 4. Validar start_date como fecha válida y budget como número positivo, ambos obligatorios.
   body("start_date")
-    .notEmpty()
-    .withMessage("la fecha no debe estar vacia")
-    .bail()
-    .isISO8601({ strict: true })
-    .withMessage("la fecha ingresada no es valida"),
+    .notEmpty().withMessage("la fecha no debe estar vacia")
+    .isISO8601({ strict: true }).withMessage("la fecha ingresada no es valida"),
   body("budget")
     .isFloat({gt: 0})
     .withMessage("el  budget no es positivo")
     .notEmpty()
     .withMessage("el budget no debe estar vacia"),
   // TODO: 5. Validar leader_id: debe existir y pertenecer a un usuario activo (UserModel).
-  body("leader_id").custom(async (project_id, user_id) => {
-    const project_id = await ProjectModel.findByPk(project_id);
-    const user_id = await UserModel.findByPk(user_id);
-    if (!user_id) throw new Error("no existe el id delñ projecto");
-    if (!project_id) throw new Error("no existe el id delñ projecto");
+  body("leader_id").custom(async (leader_id) => {
+    const userExist = await ProjectModel.findByPk(leader_id);
+    if (!userExist) throw new Error("el usuario no existe o esta eliminado");
     return true;
   }),
   // TODO: 6. Validar technologies: lista de ids que existan (TechnologyModel).
@@ -55,13 +50,9 @@ export const createProjectValidation = [
   .bail()
   .custom(async (technologies) => {
     for (const id of technologies) {
-      if (!Number.isInteger(id) || id <= 0) {
-        throw new Error("el id de la tecnologia no es valido");
-      }
+      if (!Number.isInteger(id) || id <= 0) throw new Error("el id de la tecnologia no es valido");
       const technology = await TechnologyModel.findByPk(id);
-      if (!technology) {
-        throw new Error(`la tecnologia con id ${id} no existe`);
-      }
+      if (!technology) throw new Error(`la tecnologia con id ${id} no existe`);
     }
     return true;
   }),

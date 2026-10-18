@@ -10,8 +10,8 @@ export const registerValidation = [
     .isLength({min: 3, max:20}).withMessage("el user name no cumple con los minimos y maximos caracteres")
     .bail()
     .custom(async(username)=>{
-      const username = await UserModel.findOne({where: {username}})
-      if (username) throw new Error("el username ya existe intente con otro")
+      const userNameExist = await UserModel.findOne({where: {username}})
+      if (userNameExist) throw new Error("el username ya existe intente con otro")
       return true
     }),
   // TODO: 2. Validar email: obligatorio, con formato válido y único.
@@ -21,8 +21,8 @@ export const registerValidation = [
     .isString().withMessage("la no es del tipo string")
     .bail()
     .custom(async(email)=>{
-      const email = await UserModel.findOne({where: { email}})
-      if(email) throw new Error("el email ya existe")
+      const emailExist = await UserModel.findOne({where: { email}})
+      if(emailExist) throw new Error("el email ya existe")
       return true
     }),
     
@@ -40,11 +40,11 @@ export const registerValidation = [
   body("profile.employee_number")
     .notEmpty().withMessage("de numero de empleado esta vacio")
     .bail()
-    .custom(async(empleado)=>{
-      const empleado = await ProfileModel.findOne({
+    .custom(async(employee_number)=>{
+      const empleadoExist = await ProfileModel.findOne({
         where: {employee_number}
       })
-      if (employee_number) throw new Error("el numero de empleado ya existe")
+      if (empleadoExist) throw new Error("el numero de empleado ya existe")
       return true
     }),
   // TODO: 6. Validar profile.first_name y profile.last_name como obligatorios, y profile.phone como opcional.
