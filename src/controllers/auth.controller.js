@@ -2,6 +2,8 @@
 import { UserModel, ProfileModel } from "../models/index.js";
 import { hashPassword, comparePassword } from "../helpers/bcrypt.helper.js";
 import { signToken } from "../helpers/jwt.helper.js";
+import { matchedData } from "express-validator";
+
 
 export const register = async (req, res) => {
   try {
@@ -22,7 +24,7 @@ export const register = async (req, res) => {
       user_id: userCreated.id,
     });
     // TODO: 3. Responder con código 201, un mensaje de éxito y devolver el usuario sin la password.
-    const userInfo = await UserModel.findOne(userCreated.id, {
+    const userInfo = await UserModel.findByPk(userCreated.id, {
       attributes: { exclude: ["password"] },
     });
     return res.status(201).json({message: "usuario y perfil cargados correctamente", userInfo})
@@ -62,7 +64,7 @@ export const login = async (req, res) => {
 export const logout = async (_req, res) => {
   try {
     // TODO: 1. Eliminar la cookie "token" y responder con código 204 sin devolver ningun mensaje.
-    res.clearCokkie("token")
+    res.clearCookie("token")
     return res.status(204).send()
   } catch (error) {
     console.log(error);
